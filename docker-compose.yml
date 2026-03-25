@@ -1,7 +1,6 @@
 services:
   fx-bot:
-    build:
-      context: https://github.com/hirobaske0723-code/fx-auto.git
+    build: .
     restart: unless-stopped
     env_file: .env
     volumes:
