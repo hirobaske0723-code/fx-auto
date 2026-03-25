@@ -2,3 +2,4 @@
 __pycache__/
 *.pyc
 fx_bot.pid
+fx_bot.log
