@@ -1,0 +1,4 @@
+.env
+__pycache__/
+*.pyc
+fx_bot.pid

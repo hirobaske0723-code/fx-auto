@@ -1,0 +1,6 @@
+yfinance
+pandas
+python-dotenv
+schedule
+requests
+certifi

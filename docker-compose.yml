@@ -1,0 +1,7 @@
+services:
+  fx-bot:
+    build: .
+    restart: unless-stopped
+    env_file: .env
+    volumes:
+      - ./fx_bot.log:/app/fx_bot.log
