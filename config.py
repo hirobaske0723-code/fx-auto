@@ -10,7 +10,7 @@ SLACK_WEBHOOK_URL = os.getenv("SLACK_WEBHOOK_URL")
 # 通貨ペア
 SYMBOL_FROM = "USD"
 SYMBOL_TO = "JPY"
-TIMEFRAME = "60min"
+TIMEFRAME = "15min"
 
 # 戦略パラメータ
 MA_SHORT = 20
