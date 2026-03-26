@@ -13,8 +13,8 @@ SYMBOL_TO = "JPY"
 TIMEFRAME = "15min"
 
 # 戦略パラメータ
-MA_SHORT = 20
-MA_LONG = 50
+MA_SHORT = 5
+MA_LONG = 20
 RSI_PERIOD = 14
 
 # 発注

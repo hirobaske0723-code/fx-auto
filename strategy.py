@@ -32,7 +32,7 @@ def calculate_signals(df: pd.DataFrame) -> pd.DataFrame:
 
     # シグナル：クロス + RSIフィルター
     df["signal"] = 0
-    df.loc[ma_cross_up & (df["rsi"] < 70), "signal"] = 1    # 買い
-    df.loc[ma_cross_down & (df["rsi"] > 30), "signal"] = -1  # 売り
+    df.loc[ma_cross_up & (df["rsi"] < 60), "signal"] = 1    # 買い
+    df.loc[ma_cross_down & (df["rsi"] > 40), "signal"] = -1  # 売り
 
     return df
