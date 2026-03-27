@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
-from report import _calc_trade_stats
+from report import _calc_trade_stats, _calc_signal_stats
 
 
 def make_trade(pnl, balance):
@@ -64,3 +64,63 @@ def test_calc_trade_stats_max_streak():
     result = _calc_trade_stats(trades)
     assert result["max_streak_win"] == 3
     assert result["max_streak_loss"] == 2
+
+
+# ── _calc_signal_stats ──────────────────────────────────────
+
+
+def make_signal(signal, action="watch", days_ago=0):
+    ts = (datetime.now() - timedelta(days=days_ago)).isoformat(timespec="seconds")
+    return {
+        "timestamp": ts,
+        "price": 150.0,
+        "signal": signal,
+        "rsi": 55.0,
+        "ma_short": 149.9,
+        "ma_long": 149.8,
+        "action": action,
+    }
+
+
+def test_calc_signal_stats_empty():
+    result = _calc_signal_stats([])
+    assert result["total"] == 0
+    assert result["buy"] == 0
+    assert result["sell"] == 0
+    assert result["rate"] == 0.0
+    assert result["last_signal"] is None
+
+
+def test_calc_signal_stats_counts():
+    signals = [
+        make_signal(1, "entry"),
+        make_signal(-1, "skip(position)"),
+        make_signal(0, "watch"),
+        make_signal(1, "entry"),
+    ]
+    result = _calc_signal_stats(signals)
+    assert result["buy"] == 2
+    assert result["sell"] == 1
+    assert result["none"] == 1
+    assert result["total"] == 4
+    assert abs(result["rate"] - 75.0) < 0.1
+
+
+def test_calc_signal_stats_excludes_old():
+    signals = [
+        make_signal(1, "entry", days_ago=8),   # 8日前 → 除外
+        make_signal(-1, "entry", days_ago=1),  # 1日前 → 含む
+    ]
+    result = _calc_signal_stats(signals)
+    assert result["total"] == 1
+    assert result["sell"] == 1
+
+
+def test_calc_signal_stats_last_signal():
+    signals = [
+        make_signal(0, "watch"),
+        make_signal(1, "entry"),
+        make_signal(0, "watch"),
+    ]
+    result = _calc_signal_stats(signals)
+    assert result["last_signal"]["signal"] == 1
