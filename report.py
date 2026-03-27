@@ -174,5 +174,7 @@ def generate(save=False):
 
 
 if __name__ == "__main__":
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8")
     save_flag = "--save" in sys.argv
     generate(save=save_flag)

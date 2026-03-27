@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
-from report import _calc_trade_stats, _calc_signal_stats
+from report import _calc_trade_stats, _calc_signal_stats, generate
 
 
 def make_trade(pnl, balance):
@@ -124,3 +124,30 @@ def test_calc_signal_stats_last_signal():
     ]
     result = _calc_signal_stats(signals)
     assert result["last_signal"]["signal"] == 1
+
+
+# ── generate() ──────────────────────────────────────────────
+
+
+def test_generate_no_data(tmp_path):
+    """trades.json / signals_log.json がない状態でクラッシュしないこと"""
+    orig = os.getcwd()
+    try:
+        os.chdir(tmp_path)
+        output = generate(save=False)
+    finally:
+        os.chdir(orig)
+    assert "FX Bot 成績レポート" in output
+    assert "取引数: 0" in output
+    assert "記録なし" in output
+
+
+def test_generate_save(tmp_path):
+    """save=True で logs/stats_report.md が生成されること"""
+    orig = os.getcwd()
+    try:
+        os.chdir(tmp_path)
+        generate(save=True)
+    finally:
+        os.chdir(orig)
+    assert (tmp_path / "logs" / "stats_report.md").exists()
