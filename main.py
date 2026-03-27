@@ -6,6 +6,7 @@ import atexit
 import json
 import schedule
 import logging
+import report
 from datetime import datetime, timedelta
 from market_data import get_forex_data
 from strategy import calculate_signals
@@ -97,6 +98,7 @@ def run_cycle():
                     return
 
         # 3. エントリー（ポジションなし時）
+        position_before_entry = trader.position
         if trader.position is None:
             if signal == 1:
                 trade = trader.open_long(current_price)
@@ -110,6 +112,13 @@ def run_cycle():
                     notify_open(trade)
             else:
                 log.info("シグナルなし。様子見。")
+
+        # 4. シグナル記録
+        if signal != 0:
+            action = "skip(position)" if position_before_entry is not None else "entry"
+        else:
+            action = "watch"
+        save_signal(current_price, signal, float(rsi), float(ma_s), float(ma_l), action)
 
     except Exception as e:
         log.error(f"エラー: {e}", exc_info=True)
@@ -187,6 +196,8 @@ def daily_reset():
     log.info("デイリーリセット")
     notify_daily_reset(risk.daily_pnl)
     risk.reset()
+    report.generate(save=True)
+    log.info("stats_report.md を更新しました")
 
 
 # ──────────────────────────────
