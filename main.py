@@ -120,6 +120,25 @@ def run_cycle():
 # トレード記録（trades.jsonに追記）
 # ──────────────────────────────
 TRADES_FILE = "trades.json"
+SIGNALS_FILE = "signals_log.json"
+
+
+def save_signal(price: float, signal: int, rsi: float, ma_short: float, ma_long: float, action: str):
+    signals = []
+    if os.path.exists(SIGNALS_FILE):
+        with open(SIGNALS_FILE, "r", encoding="utf-8") as f:
+            signals = json.load(f)
+    signals.append({
+        "timestamp": datetime.now().isoformat(timespec="seconds"),
+        "price": round(price, 3),
+        "signal": signal,
+        "rsi": round(rsi, 1),
+        "ma_short": round(ma_short, 3),
+        "ma_long": round(ma_long, 3),
+        "action": action,
+    })
+    with open(SIGNALS_FILE, "w", encoding="utf-8") as f:
+        json.dump(signals, f, ensure_ascii=False, indent=2)
 
 
 def save_trade(trade: dict):
