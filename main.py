@@ -243,7 +243,9 @@ def daily_reset():
     notify_daily_reset(risk.daily_pnl)
     risk.reset()
     report.generate(save=True)
-    log.info("stats_report.md を更新しました")
+    report.generate_json()
+    log.info("stats_report.md / stats.json を更新しました")
+    github_push_stats()
 
 
 # ──────────────────────────────
