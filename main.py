@@ -6,6 +6,8 @@ import atexit
 import json
 import schedule
 import logging
+import base64
+import requests as _requests
 import report
 from datetime import datetime, timedelta
 from market_data import get_forex_data
@@ -131,6 +133,10 @@ def run_cycle():
 TRADES_FILE = "trades.json"
 SIGNALS_FILE = "signals_log.json"
 
+GITHUB_OWNER = "hirobaske0723-code"
+GITHUB_REPO = "fx-auto"
+GITHUB_STATS_PATH = "logs/stats.json"
+
 
 def save_signal(price: float, signal: int, rsi: float, ma_short: float, ma_long: float, action: str):
     signals = []
@@ -148,6 +154,46 @@ def save_signal(price: float, signal: int, rsi: float, ma_short: float, ma_long:
     })
     with open(SIGNALS_FILE, "w", encoding="utf-8") as f:
         json.dump(signals, f, ensure_ascii=False, indent=2)
+
+
+def github_push_stats():
+    from config import PAT_TOKEN
+    if not PAT_TOKEN:
+        log.warning("PAT_TOKEN が未設定のため stats.json の GitHub push をスキップ")
+        return
+
+    stats_file = report.STATS_JSON_FILE
+    if not os.path.exists(stats_file):
+        log.warning(f"{stats_file} が存在しないため push をスキップ")
+        return
+
+    with open(stats_file, "r", encoding="utf-8") as f:
+        content = f.read()
+
+    encoded = base64.b64encode(content.encode("utf-8")).decode("ascii")
+    api_url = f"https://api.github.com/repos/{GITHUB_OWNER}/{GITHUB_REPO}/contents/{GITHUB_STATS_PATH}"
+    headers = {
+        "Authorization": f"Bearer {PAT_TOKEN}",
+        "Accept": "application/vnd.github+json",
+    }
+
+    sha = None
+    r = _requests.get(api_url, headers=headers)
+    if r.status_code == 200:
+        sha = r.json().get("sha")
+
+    payload = {
+        "message": f"chore: update stats.json [{datetime.now().strftime('%Y-%m-%d %H:%M')}]",
+        "content": encoded,
+    }
+    if sha:
+        payload["sha"] = sha
+
+    r = _requests.put(api_url, headers=headers, json=payload)
+    if r.status_code in (200, 201):
+        log.info("stats.json を GitHub に push しました")
+    else:
+        log.error(f"stats.json の push に失敗: {r.status_code} {r.text[:200]}")
 
 
 def save_trade(trade: dict):
