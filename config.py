@@ -6,6 +6,7 @@ load_dotenv()
 # API Keys
 ALPHA_VANTAGE_API_KEY = os.getenv("ALPHA_VANTAGE_API_KEY")
 SLACK_WEBHOOK_URL = os.getenv("SLACK_WEBHOOK_URL")
+PAT_TOKEN = os.getenv("PAT_TOKEN")
 
 # 通貨ペア
 SYMBOL_FROM = "USD"
