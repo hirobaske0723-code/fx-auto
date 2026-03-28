@@ -1,0 +1,20 @@
+{
+  "updated_at": "2026-03-28T00:48:45",
+  "balance": 100000.0,
+  "total_pnl": 0.0,
+  "win_rate": 0.0,
+  "total_trades": 0,
+  "wins": 0,
+  "losses": 0,
+  "max_drawdown": 0.0,
+  "max_streak_win": 0,
+  "max_streak_loss": 0,
+  "signal_7d": {
+    "total": 0,
+    "buy": 0,
+    "sell": 0,
+    "rate": 0.0,
+    "last_signal_at": null,
+    "last_signal_dir": null
+  }
+}
