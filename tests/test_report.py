@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
-from report import _calc_trade_stats, _calc_signal_stats, generate
+from report import _calc_trade_stats, _calc_signal_stats, generate, generate_json
 
 
 def make_trade(pnl, balance):
@@ -151,3 +151,61 @@ def test_generate_save(tmp_path):
     finally:
         os.chdir(orig)
     assert (tmp_path / "logs" / "stats_report.md").exists()
+
+
+# ── generate_json() ─────────────────────────────────────────
+
+
+def test_generate_json_creates_file(tmp_path):
+    orig = os.getcwd()
+    try:
+        os.chdir(tmp_path)
+        os.makedirs("logs", exist_ok=True)
+        generate_json()
+    finally:
+        os.chdir(orig)
+    assert (tmp_path / "logs" / "stats.json").exists()
+
+
+def test_generate_json_content_empty(tmp_path):
+    """データなしでも正常に生成されること"""
+    orig = os.getcwd()
+    try:
+        os.chdir(tmp_path)
+        os.makedirs("logs", exist_ok=True)
+        data = generate_json()
+    finally:
+        os.chdir(orig)
+    assert "updated_at" in data
+    assert data["balance"] == 100000.0
+    assert data["total_trades"] == 0
+    assert data["win_rate"] == 0.0
+    assert data["signal_7d"]["last_signal_at"] is None
+    assert data["signal_7d"]["last_signal_dir"] is None
+
+
+def test_generate_json_with_trades(tmp_path):
+    """取引データがある場合に正しく集計されること"""
+    import json as _json
+    orig = os.getcwd()
+    try:
+        os.chdir(tmp_path)
+        os.makedirs("logs", exist_ok=True)
+        trades = [
+            {"direction": "long", "entry_price": 150.0, "exit_price": 150.15,
+             "reason": "TP", "pnl": 150.0, "balance": 100150.0,
+             "timestamp": "2026-03-27T10:00:00"},
+            {"direction": "short", "entry_price": 150.2, "exit_price": 150.3,
+             "reason": "SL", "pnl": -100.0, "balance": 100050.0,
+             "timestamp": "2026-03-27T12:00:00"},
+        ]
+        with open("trades.json", "w") as f:
+            _json.dump(trades, f)
+        data = generate_json()
+    finally:
+        os.chdir(orig)
+    assert data["total_trades"] == 2
+    assert data["wins"] == 1
+    assert data["losses"] == 1
+    assert data["total_pnl"] == 50.0
+    assert data["balance"] == 100050.0

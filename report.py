@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 TRADES_FILE = "trades.json"
 SIGNALS_FILE = "signals_log.json"
 STATS_FILE = "logs/stats_report.md"
+STATS_JSON_FILE = "logs/stats.json"
 INITIAL_BALANCE = 100_000.0
 
 
@@ -171,6 +172,49 @@ def generate(save=False):
             f.write(output)
 
     return output
+
+
+def generate_json(path=None):
+    if path is None:
+        path = STATS_JSON_FILE
+    trades = _load_json(TRADES_FILE)
+    signals = _load_json(SIGNALS_FILE)
+
+    ts = _calc_trade_stats(trades)
+    ss = _calc_signal_stats(signals)
+
+    last_signal_at = None
+    last_signal_dir = None
+    if ss["last_signal"]:
+        last_signal_at = ss["last_signal"]["timestamp"][:16].replace("T", " ")
+        last_signal_dir = "BUY" if ss["last_signal"]["signal"] == 1 else "SELL"
+
+    data = {
+        "updated_at": datetime.now().isoformat(timespec="seconds"),
+        "balance": ts["current_balance"],
+        "total_pnl": ts["total_pnl"],
+        "win_rate": round(ts["win_rate"], 1),
+        "total_trades": ts["total"],
+        "wins": ts["wins"],
+        "losses": ts["losses"],
+        "max_drawdown": ts["max_drawdown"],
+        "max_streak_win": ts["max_streak_win"],
+        "max_streak_loss": ts["max_streak_loss"],
+        "signal_7d": {
+            "total": ss["total"],
+            "buy": ss["buy"],
+            "sell": ss["sell"],
+            "rate": round(ss["rate"], 1),
+            "last_signal_at": last_signal_at,
+            "last_signal_dir": last_signal_dir,
+        },
+    }
+
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+
+    return data
 
 
 if __name__ == "__main__":
