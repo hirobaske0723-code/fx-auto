@@ -1,20 +1,20 @@
 {
-  "updated_at": "2026-03-30T00:00:08",
-  "balance": 100000.0,
-  "total_pnl": 0.0,
-  "win_rate": 0.0,
-  "total_trades": 0,
-  "wins": 0,
-  "losses": 0,
-  "max_drawdown": 0.0,
-  "max_streak_win": 0,
-  "max_streak_loss": 0,
+  "updated_at": "2026-03-31T00:00:04",
+  "balance": 99917.02,
+  "total_pnl": -82.98000000000002,
+  "win_rate": 33.3,
+  "total_trades": 3,
+  "wins": 1,
+  "losses": 2,
+  "max_drawdown": 275.99000000000524,
+  "max_streak_win": 1,
+  "max_streak_loss": 2,
   "signal_7d": {
-    "total": 190,
-    "buy": 0,
-    "sell": 0,
-    "rate": 0.0,
-    "last_signal_at": null,
-    "last_signal_dir": null
+    "total": 270,
+    "buy": 1,
+    "sell": 2,
+    "rate": 1.1,
+    "last_signal_at": "2026-03-30 16:15",
+    "last_signal_dir": "SELL"
   }
 }
