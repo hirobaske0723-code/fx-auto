@@ -1,20 +1,20 @@
 {
-  "updated_at": "2026-04-03T00:00:07",
-  "balance": 99927.02,
-  "total_pnl": -72.98000000000002,
-  "win_rate": 43.8,
-  "total_trades": 16,
-  "wins": 7,
-  "losses": 9,
+  "updated_at": "2026-04-04T00:01:19",
+  "balance": 99884.02,
+  "total_pnl": -115.98000000000002,
+  "win_rate": 44.4,
+  "total_trades": 18,
+  "wins": 8,
+  "losses": 10,
   "max_drawdown": 468.9700000000157,
   "max_streak_win": 2,
   "max_streak_loss": 3,
   "signal_7d": {
-    "total": 556,
-    "buy": 7,
-    "sell": 13,
-    "rate": 3.6,
-    "last_signal_at": "2026-04-02 23:30",
+    "total": 651,
+    "buy": 11,
+    "sell": 16,
+    "rate": 4.1,
+    "last_signal_at": "2026-04-03 20:15",
     "last_signal_dir": "SELL"
   }
 }
