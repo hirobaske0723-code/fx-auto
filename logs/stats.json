@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-04-04T00:01:19",
+  "updated_at": "2026-04-05T00:00:07",
   "balance": 99884.02,
   "total_pnl": -115.98000000000002,
   "win_rate": 44.4,
@@ -10,10 +10,10 @@
   "max_streak_win": 2,
   "max_streak_loss": 3,
   "signal_7d": {
-    "total": 651,
+    "total": 637,
     "buy": 11,
     "sell": 16,
-    "rate": 4.1,
+    "rate": 4.2,
     "last_signal_at": "2026-04-03 20:15",
     "last_signal_dir": "SELL"
   }
