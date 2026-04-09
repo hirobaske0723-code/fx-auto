@@ -1,5 +1,5 @@
 import pandas as pd
-from config import MA_SHORT, MA_LONG, RSI_PERIOD
+from config import MA_SHORT, MA_LONG, RSI_PERIOD, RSI_OVERSOLD, RSI_OVERBOUGHT
 
 
 def calculate_signals(df: pd.DataFrame) -> pd.DataFrame:
@@ -32,7 +32,7 @@ def calculate_signals(df: pd.DataFrame) -> pd.DataFrame:
 
     # シグナル：クロス + RSIフィルター
     df["signal"] = 0
-    df.loc[ma_cross_up & (df["rsi"] < 60), "signal"] = 1    # 買い
-    df.loc[ma_cross_down & (df["rsi"] > 40), "signal"] = -1  # 売り
+    df.loc[ma_cross_up & (df["rsi"] < RSI_OVERSOLD), "signal"] = 1    # 買い
+    df.loc[ma_cross_down & (df["rsi"] > RSI_OVERBOUGHT), "signal"] = -1  # 売り
 
     return df

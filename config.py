@@ -14,9 +14,11 @@ SYMBOL_TO = "JPY"
 TIMEFRAME = "15min"
 
 # 戦略パラメータ
-MA_SHORT = 5
-MA_LONG = 20
+MA_SHORT = 20
+MA_LONG = 50
 RSI_PERIOD = 14
+RSI_OVERSOLD = 30    # 買いシグナルの条件（RSIがこれ未満）
+RSI_OVERBOUGHT = 70  # 売りシグナルの条件（RSIがこれより大）
 
 # 発注
 LOT_SIZE = 0.01        # 0.01ロット
