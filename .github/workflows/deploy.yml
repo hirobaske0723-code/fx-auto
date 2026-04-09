@@ -1,0 +1,19 @@
+name: Deploy to NAS
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: [self-hosted, nas]
+    steps:
+      - name: Git Pull
+        env:
+          PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
+        run: |
+          git config --global --add safe.directory /volume1/docker/fx-bot
+          cd /volume1/docker/fx-bot
+          git remote set-url origin https://x-access-token:${PAT_TOKEN}@github.com/hirobaske0723-code/fx-auto.git
+          git fetch origin
+          git reset --hard origin/main
