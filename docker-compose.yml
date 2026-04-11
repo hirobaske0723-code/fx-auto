@@ -4,4 +4,9 @@ services:
     restart: unless-stopped
     env_file: .env
     volumes:
+      - ./:/app:ro
       - ./fx_bot.log:/app/fx_bot.log
+      - ./trades.json:/app/trades.json
+      - ./signals_log.json:/app/signals_log.json
+      - ./logs:/app/logs
+      - ./reports:/app/reports
