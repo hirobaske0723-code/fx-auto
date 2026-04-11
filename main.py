@@ -9,6 +9,8 @@ import logging
 import base64
 import requests as _requests
 import report
+import evaluator
+import strategist
 from datetime import datetime, timedelta
 from market_data import get_forex_data
 from strategy import calculate_signals
@@ -211,28 +213,14 @@ def save_trade(trade: dict):
 # 週次レポート（毎週月曜0時）
 # ──────────────────────────────
 def weekly_report():
-    since = datetime.now() - timedelta(days=7)
-    trades = []
-    if os.path.exists(TRADES_FILE):
-        with open(TRADES_FILE, "r", encoding="utf-8") as f:
-            all_trades = json.load(f)
-        trades = [t for t in all_trades if datetime.fromisoformat(t["timestamp"]) >= since]
-
-    total_pnl = sum(t["pnl"] for t in trades)
-    wins = [t for t in trades if t["pnl"] > 0]
-    losses = [t for t in trades if t["pnl"] <= 0]
-    win_rate = len(wins) / len(trades) * 100 if trades else 0
-
-    log.info(f"週次レポート: {len(trades)}trades | PnL={total_pnl:+.0f}円 | 勝率={win_rate:.0f}%")
-
-    from notifier import _send
-    _send(
-        f"📊 *週次レポート*\n"
-        f"取引数: `{len(trades)}`（勝: {len(wins)} / 負: {len(losses)}）\n"
-        f"勝率: `{win_rate:.0f}%`\n"
-        f"週間損益: `{total_pnl:+.0f}円`\n"
-        f"現在残高: `{trader.balance:,.0f}円`"
-    )
+    """週次評価レポート（Evaluator + Strategist）"""
+    log.info("週次評価 開始")
+    try:
+        eval_results = evaluator.run()
+        strategist.run(eval_results)
+        log.info("週次評価 完了")
+    except Exception as e:
+        log.error(f"週次評価エラー: {e}", exc_info=True)
 
 
 # ──────────────────────────────

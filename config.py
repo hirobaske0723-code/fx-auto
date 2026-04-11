@@ -7,6 +7,12 @@ load_dotenv()
 ALPHA_VANTAGE_API_KEY = os.getenv("ALPHA_VANTAGE_API_KEY")
 SLACK_WEBHOOK_URL = os.getenv("SLACK_WEBHOOK_URL")
 PAT_TOKEN = os.getenv("PAT_TOKEN")
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
+
+# LLM設定（方針策定エージェント用）
+LLM_API_KEY = GEMINI_API_KEY
+LLM_BASE_URL = "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions"
+LLM_MODEL = "gemini-2.0-flash"
 
 # 通貨ペア
 SYMBOL_FROM = "USD"
