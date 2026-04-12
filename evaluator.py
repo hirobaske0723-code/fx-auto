@@ -276,7 +276,10 @@ def evaluate_system_stability() -> dict:
 # ─────────────────────────────────────────
 
 def run() -> list[dict]:
-    log.info("FX Evaluatorエージェント開始")
+    """全軸を並列評価して結果リストを返す（5軸が独立して同時実行）"""
+    from concurrent.futures import ThreadPoolExecutor
+
+    log.info("FX Evaluatorエージェント開始（5軸並列評価）")
 
     all_trades = _load_json(TRADES_FILE)
     signals = _load_json(SIGNALS_FILE)
@@ -284,12 +287,19 @@ def run() -> list[dict]:
 
     log.info(f"全取引数: {len(all_trades)} / 直近7日: {len(week_trades)}")
 
+    with ThreadPoolExecutor(max_workers=5) as executor:
+        f_profit    = executor.submit(evaluate_profitability, all_trades, week_trades)
+        f_risk      = executor.submit(evaluate_risk_management, all_trades, week_trades)
+        f_strategy  = executor.submit(evaluate_strategy_effectiveness, all_trades)
+        f_signal    = executor.submit(evaluate_signal_quality, signals)
+        f_stability = executor.submit(evaluate_system_stability)
+
     results = [
-        evaluate_profitability(all_trades, week_trades),
-        evaluate_risk_management(all_trades, week_trades),
-        evaluate_strategy_effectiveness(all_trades),
-        evaluate_signal_quality(signals),
-        evaluate_system_stability(),
+        f_profit.result(),
+        f_risk.result(),
+        f_strategy.result(),
+        f_signal.result(),
+        f_stability.result(),
     ]
 
     log.info("FX Evaluatorエージェント完了")
